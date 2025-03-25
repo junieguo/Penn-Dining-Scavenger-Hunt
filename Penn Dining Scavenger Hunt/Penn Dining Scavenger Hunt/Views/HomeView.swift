@@ -16,12 +16,17 @@ struct HomeView: View {
                 } label: {
                     HStack {
                         Text(diningHall.name)
+                            .font(.body)
                         Spacer()
                         if diningHall.isCollected {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(.green)
+                        } else {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.red)
                         }
                     }
+                    .padding(.vertical, 8)
                 }
             }
             .navigationTitle("Penn Dining Hunt")
