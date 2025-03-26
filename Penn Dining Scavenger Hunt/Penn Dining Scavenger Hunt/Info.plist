@@ -1,6 +1,2 @@
-//
-//  Info.plist
-//  Penn Dining Scavenger Hunt
-//
-//
-
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>We need your location to check if you're near Penn dining halls for the scavenger hunt game</string>
