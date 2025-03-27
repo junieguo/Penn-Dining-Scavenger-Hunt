@@ -10,10 +10,13 @@ struct DiningHallView: View {
     @Environment(DiningHallViewModel.self) private var viewModel
     let diningHall: DiningHall
     
-    // Placeholder state variables
-    @State private var isNearby = false
     @State private var showCollectionError = false
     @State private var errorMessage = ""
+    @State private var isCheckingLocation = false
+    
+    private var isNearby: Bool {
+        viewModel.isUserNearby(diningHall: diningHall)
+    }
     
     var body: some View {
         VStack(spacing: 20) {
@@ -28,21 +31,34 @@ struct DiningHallView: View {
                         .foregroundColor(.green)
                         .font(.headline)
                 } else {
-                    Text(isNearby ? "Within 50 meters" : "Not nearby")
-                        .foregroundColor(isNearby ? .green : .red)
+                    if isCheckingLocation {
+                        ProgressView()
+                            .padding(.vertical, 4)
+                    } else {
+                        Text(isNearby ? "Within 50 meters" : "Not nearby")
+                            .foregroundColor(isNearby ? .green : .red)
+                    }
                 }
             }
             .padding()
             
-            // Collection button (placeholder)
+            // Collection button
             Button(action: attemptCollection) {
-                Text("Collect This Location")
-                    .padding()
-                    .background(diningHall.isCollected || !isNearby ? Color.gray : Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+                if isCheckingLocation {
+                    ProgressView()
+                        .tint(.white)
+                } else {
+                    Text("Collect This Location")
+                }
             }
-            .disabled(diningHall.isCollected || !isNearby)
+            .padding()
+            .background(
+                diningHall.isCollected || !isNearby ?
+                Color.gray : Color.blue
+            )
+            .foregroundColor(.white)
+            .cornerRadius(10)
+            .disabled(diningHall.isCollected || !isNearby || isCheckingLocation)
             
             Spacer()
         }
@@ -54,18 +70,22 @@ struct DiningHallView: View {
             Text(errorMessage)
         }
         .onAppear {
-            // Placeholder for location check
-            checkIfNearby()
+            checkLocation()
+        }
+        .onChange(of: viewModel.currentLocation) { _ in
+            checkLocation()
         }
     }
     
-    // Placeholder function for location check
-    private func checkIfNearby() {
-        // In a real implementation, this would use CoreLocation for now, randomly set it to true for demonstration
-        isNearby = Bool.random()
+    private func checkLocation() {
+        guard !diningHall.isCollected else { return }
+        
+        isCheckingLocation = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            isCheckingLocation = false
+        }
     }
     
-    // Placeholder function for collection attempt
     private func attemptCollection() {
         if diningHall.isCollected {
             errorMessage = "You've already collected this dining hall!"
@@ -74,13 +94,20 @@ struct DiningHallView: View {
             errorMessage = "You need to be within 50 meters to collect this dining hall!"
             showCollectionError = true
         } else {
-            // In a real implementation, this would trigger shake/scribble detection
+            // This would trigger shake/scribble detection in final implementation
             viewModel.collectDiningHall(diningHall: diningHall)
         }
     }
 }
 
 #Preview {
-    DiningHallView(diningHall: DiningHall(name: "1920 Commons", location: CLLocation(latitude: 39.9514, longitude: -75.1976)))
-        .environment(DiningHallViewModel())
+    let viewModel = DiningHallViewModel()
+    viewModel.currentLocation = CLLocation(latitude: 39.9514, longitude: -75.1976) // Simulate being at 1920 Commons
+    
+    return DiningHallView(diningHall: DiningHall(
+        name: "1920 Commons",
+        location: CLLocation(latitude: 39.9514, longitude: -75.1976),
+        isCollected: false
+    ))
+    .environment(viewModel)
 }
