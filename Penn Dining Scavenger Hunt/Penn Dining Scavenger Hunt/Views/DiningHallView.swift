@@ -75,13 +75,18 @@ struct DiningHallView: View {
         .onChange(of: viewModel.currentLocation) { _ in
             checkLocation()
         }
+        .onChange(of: viewModel.authorizationStatus) { status in
+            if status == .authorizedWhenInUse || status == .authorizedAlways {
+                viewModel.startLocationUpdates()
+            }
+        }
     }
     
     private func checkLocation() {
         guard !diningHall.isCollected else { return }
         
         isCheckingLocation = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             isCheckingLocation = false
         }
     }
@@ -94,20 +99,7 @@ struct DiningHallView: View {
             errorMessage = "You need to be within 50 meters to collect this dining hall!"
             showCollectionError = true
         } else {
-            // This would trigger shake/scribble detection in final implementation
             viewModel.collectDiningHall(diningHall: diningHall)
         }
     }
-}
-
-#Preview {
-    let viewModel = DiningHallViewModel()
-    viewModel.currentLocation = CLLocation(latitude: 39.9514, longitude: -75.1976) // Simulate being at 1920 Commons
-    
-    return DiningHallView(diningHall: DiningHall(
-        name: "1920 Commons",
-        location: CLLocation(latitude: 39.9514, longitude: -75.1976),
-        isCollected: false
-    ))
-    .environment(viewModel)
 }
