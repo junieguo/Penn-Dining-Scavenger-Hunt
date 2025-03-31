@@ -10,9 +10,22 @@
 		826F46842D8E6671008AE83E /* Penn Dining Scavenger Hunt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Penn Dining Scavenger Hunt.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		82A7BD862D9A4C81001F7506 /* Exceptions for "Penn Dining Scavenger Hunt" folder in "Penn Dining Scavenger Hunt" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Penn-Dining-Scavenger-Hunt-Info.plist",
+			);
+			target = 826F46832D8E6671008AE83E /* Penn Dining Scavenger Hunt */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		826F46862D8E6671008AE83E /* Penn Dining Scavenger Hunt */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				82A7BD862D9A4C81001F7506 /* Exceptions for "Penn Dining Scavenger Hunt" folder in "Penn Dining Scavenger Hunt" target */,
+			);
 			path = "Penn Dining Scavenger Hunt";
 			sourceTree = "<group>";
 		};
@@ -254,6 +267,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Penn Dining Scavenger Hunt/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Penn-Dining-Scavenger-Hunt-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -282,6 +296,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Penn Dining Scavenger Hunt/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Penn-Dining-Scavenger-Hunt-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

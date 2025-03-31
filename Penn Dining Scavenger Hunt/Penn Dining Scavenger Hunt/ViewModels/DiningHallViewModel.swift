@@ -16,6 +16,16 @@ class DiningHallViewModel: NSObject, CLLocationManagerDelegate {
     
     private let locationManager = CLLocationManager()
     private var isRequestingLocation = false
+    private let locationPermissionKey = "hasRequestedLocationPermission"
+
+    var hasRequestedLocationPermission: Bool {
+        get {
+            UserDefaults.standard.bool(forKey: locationPermissionKey)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: locationPermissionKey)
+        }
+    }
     
     override init() {
         super.init()
@@ -54,15 +64,25 @@ class DiningHallViewModel: NSObject, CLLocationManagerDelegate {
     }
     
     func requestLocationPermission() {
-        switch locationManager.authorizationStatus {
-        case .notDetermined:
+        if !hasRequestedLocationPermission {
+            hasRequestedLocationPermission = true
             locationManager.requestWhenInUseAuthorization()
+        }
+    }
+
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        authorizationStatus = manager.authorizationStatus
+
+        switch authorizationStatus {
         case .authorizedAlways, .authorizedWhenInUse:
+            print("Location authorized")
             startLocationUpdates()
         case .denied, .restricted:
             print("Location access denied")
+        case .notDetermined:
+            print("Authorization status not determined yet")
         @unknown default:
-            break
+            print("Unknown authorization status")
         }
     }
     
@@ -70,7 +90,6 @@ class DiningHallViewModel: NSObject, CLLocationManagerDelegate {
         guard !isRequestingLocation else { return }
         isRequestingLocation = true
         
-        // First check if location services are enabled
         guard CLLocationManager.locationServicesEnabled() else {
             print("Location services are not enabled")
             locationError = NSError(domain: "LocationServicesDisabled", code: -1)
@@ -79,22 +98,6 @@ class DiningHallViewModel: NSObject, CLLocationManagerDelegate {
         }
         
         locationManager.requestLocation()
-    }
-    
-    // MARK: - CLLocationManagerDelegate
-    
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        authorizationStatus = manager.authorizationStatus
-        switch authorizationStatus {
-        case .authorizedAlways, .authorizedWhenInUse:
-            startLocationUpdates()
-        case .denied, .restricted:
-            print("Location access denied by user")
-        case .notDetermined:
-            print("Location access not determined")
-        @unknown default:
-            break
-        }
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {

@@ -9,15 +9,16 @@ import CoreLocation
 struct DiningHallView: View {
     @Environment(DiningHallViewModel.self) private var viewModel
     let diningHall: DiningHall
-    
+
     @State private var showCollectionError = false
     @State private var errorMessage = ""
     @State private var isCheckingLocation = false
-    
+    @State private var showPermissionPrimingSheet = false
+
     private var isNearby: Bool {
         viewModel.isUserNearby(diningHall: diningHall)
     }
-    
+
     var body: some View {
         VStack(spacing: 20) {
             // Dining hall information
@@ -69,8 +70,17 @@ struct DiningHallView: View {
         } message: {
             Text(errorMessage)
         }
+        .sheet(isPresented: $showPermissionPrimingSheet) {
+            PermissionPrimingView {
+                viewModel.requestLocationPermission()
+            }
+        }
         .onAppear {
-            checkLocation()
+            if !viewModel.hasRequestedLocationPermission {
+                showPermissionPrimingSheet = true
+            } else {
+                checkLocation()
+            }
         }
         .onChange(of: viewModel.currentLocation) { _ in
             checkLocation()
@@ -81,7 +91,7 @@ struct DiningHallView: View {
             }
         }
     }
-    
+
     private func checkLocation() {
         guard !diningHall.isCollected else { return }
         
@@ -90,7 +100,7 @@ struct DiningHallView: View {
             isCheckingLocation = false
         }
     }
-    
+
     private func attemptCollection() {
         if diningHall.isCollected {
             errorMessage = "You've already collected this dining hall!"
@@ -103,3 +113,34 @@ struct DiningHallView: View {
         }
     }
 }
+
+struct PermissionPrimingView: View {
+    var onRequestPermission: () -> Void
+
+    var body: some View {
+        VStack {
+            Text("Why We Need Your Location")
+                .font(.title)
+                .padding()
+
+            Text("This app uses your location to check if you're near a dining hall. By granting access, you’ll be able to collect dining halls by shaking the device near at the dining hall.")
+                .multilineTextAlignment(.center)
+                .padding()
+
+            Button(action: {
+                onRequestPermission()
+            }) {
+                Text("Allow Location Access")
+                    .bold()
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
+            .padding()
+        }
+        .padding()
+    }
+}
+
