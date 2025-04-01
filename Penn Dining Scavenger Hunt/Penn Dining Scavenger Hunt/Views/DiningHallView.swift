@@ -23,12 +23,9 @@ struct DiningHallView: View {
         VStack(spacing: 20) {
             // Dining hall information
             VStack {
-                Text(diningHall.name)
-                    .font(.title)
-                    .bold()
-                
+            
                 if diningHall.isCollected {
-                    Text("Already Collected")
+                    Text("Collected!")
                         .foregroundColor(.green)
                         .font(.headline)
                 } else {
@@ -43,23 +40,34 @@ struct DiningHallView: View {
             }
             .padding()
             
-            // Collection button
             Button(action: attemptCollection) {
                 if isCheckingLocation {
                     ProgressView()
                         .tint(.white)
                 } else {
-                    Text("Collect This Location")
+                    Text(diningHall.isCollected ? "Already Collected" : "Collect This Location")
                 }
             }
             .padding()
             .background(
-                diningHall.isCollected || !isNearby ?
-                Color.gray : Color.blue
+                diningHall.isCollected ? Color.gray :
+                isNearby ? Color.blue : Color.gray
             )
             .foregroundColor(.white)
             .cornerRadius(10)
             .disabled(diningHall.isCollected || !isNearby || isCheckingLocation)
+            
+            if !diningHall.isCollected && isNearby {
+                VStack {
+                    Image(systemName: "iphone.gen3.radiowaves.left.and.right")
+                        .font(.system(size: 40))
+                        .padding(.bottom, 8)
+                    Text("Shake your phone to collect")
+                        .font(.headline)
+                }
+                .foregroundColor(.blue)
+                .padding()
+            }
             
             Spacer()
         }
@@ -76,11 +84,16 @@ struct DiningHallView: View {
             }
         }
         .onAppear {
+            viewModel.setCurrentDiningHall(diningHall)
             if !viewModel.hasRequestedLocationPermission {
                 showPermissionPrimingSheet = true
             } else {
                 checkLocation()
             }
+            viewModel.startMonitoringShake()
+        }
+        .onDisappear {
+            viewModel.stopMonitoringShake()
         }
         .onChange(of: viewModel.currentLocation) { _ in
             checkLocation()
@@ -94,7 +107,6 @@ struct DiningHallView: View {
 
     private func checkLocation() {
         guard !diningHall.isCollected else { return }
-        
         isCheckingLocation = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             isCheckingLocation = false
@@ -123,7 +135,7 @@ struct PermissionPrimingView: View {
                 .font(.title)
                 .padding()
 
-            Text("This app uses your location to check if you're near a dining hall. By granting access, you’ll be able to collect dining halls by shaking the device near at the dining hall.")
+            Text("This app uses your location to check if you're near a dining hall. By granting access, you'll be able to collect dining halls by shaking the device when you're at the location.")
                 .multilineTextAlignment(.center)
                 .padding()
 
@@ -143,4 +155,3 @@ struct PermissionPrimingView: View {
         .padding()
     }
 }
-
