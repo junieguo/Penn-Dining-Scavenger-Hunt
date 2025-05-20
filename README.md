@@ -6,21 +6,45 @@ A location-based scavenger hunt game centered around Penn Dining halls. Using Co
 
 ## Features
 
-- **Home Screen**
-  - Displays a list of Penn dining halls.
-  - Shows collection status (collected or not).
-  - Navigation to individual dining hall screens.
+### Home Screen
 
-- **Dining Hall Screen**
-  - Prevents duplicate collection.
-  - Checks if the user is within 50 meters of the dining hall using Core Location.
-  - Allows collection using shake detection via accelerometer data (Core Motion).
+- Displays a list of Penn dining halls.  
+- Shows collection status (collected or not).  
+- Navigation to individual dining hall screens.
 
-- **Location Permission Priming**
-  - Before requesting location permissions, the app presents a sheet explaining why access is needed, improving transparency and user trust.
+<p align="center">
+  <img src="ReadMe/CollectedHomeScreen.png" alt="Home Screen with Collected Hall" width="30%" />
+</p>
 
-- **Location Simulation**
-  - Supports simulated location using provided `.gpx` files via Xcode’s Debug > Simulate Location.
+---
+
+### Dining Hall Screen
+
+- Prevents duplicate collection.  
+- Checks if the user is within 50 meters of the dining hall using Core Location.  
+- Allows collection using shake detection via accelerometer data (Core Motion).  
+
+<p align="center">
+  <img src="ReadMe/UncollectedHall.png" alt="Uncollected Dining Hall" width="30%" />
+  <img src="ReadMe/NearbyHall.png" alt="Nearby Dining Hall (Collectible)" width="30%" />
+  <img src="ReadMe/CollectedHall.png" alt="Collected Dining Hall" width="30%" />
+</p>
+
+---
+
+### Location Permission Priming
+
+- Before requesting location permissions, the app presents a sheet explaining why access is needed, improving transparency and user trust.
+
+<p align="center">
+  <img src="ReadMe/RequestLocationPermissions.png" alt="Location Permission Prompt" width="30%" />
+</p>
+
+---
+
+### Location Simulation
+
+- Supports simulated location using provided `.gpx` files via Xcode’s Debug > Simulate Location.
 
 ---
 
